@@ -137,9 +137,13 @@ def groupingAl():
     result.printSchema()
     result.groupBy("mci").count().orderBy(col("count").desc()).show()
     result.groupBy("neighbourhood_name").count().orderBy(col("count").desc()).show()
+
     analisis=result.withColumn("year_difference",col("reportedyear")-col("occurrenceyear"))
     analisis.printSchema()
-    analisis.select(analisis["year_difference"],analisis["index"]).where(col("year_difference")>5).orderBy(col("year_difference").desc()).show()
-    return result
+    analisis.select(analisis["year_difference"],analisis["index"],analisis["mci"]).groupBy("year_difference").count().orderBy(col("count").desc()).show()
+    finalResult=analisis.where((col("occurrenceyear")>2013) & (col("year_difference")<5))
+    finalResult.groupBy("year_difference").count().orderBy(col("count").desc()).show()
 
-groupingAl()
+    return finalResult.toPandas()
+
+dataExploringResult=groupingAl()
