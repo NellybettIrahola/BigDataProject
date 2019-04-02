@@ -4,10 +4,8 @@ from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.multiclass import OneVsRestClassifier
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_classification
-from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn import metrics,tree
 
 # Label Encoder, get_dummies
 def stringProcessing(var):
@@ -52,6 +50,14 @@ def sampling(var):
     X_train, X_test, y_train, y_test = train_test_split(X_res, y_res, test_size=0.33, random_state=42)
     return (X_train, X_test, y_train, y_test)
 
+def paramEstimator():
+    X_train, X_test, y_train, y_test = sampling(imbalancePreProcessing())
+    parameters = {'max_depth': range(5, 20),'min_samples_split':[50,150,450,600]}
+    clf = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
+    clf.fit(X=X_train, y=y_train)
+    tree_model = clf.best_estimator_
+    print(clf.best_score_, clf.best_params_)
+#paramEstimator()
 
 def treeClassifier():
     features = ['neighbourhood_id', 'total_area', 'total_population', 'home_prices', 'local_employment',
@@ -65,25 +71,30 @@ def treeClassifier():
                 'occurrencedayofweek_Saturday  ', 'occurrencedayofweek_Sunday    ', 'occurrencedayofweek_Thursday  ',
                 'occurrencedayofweek_Tuesday   ', 'occurrencedayofweek_Wednesday ']
 
-    X_train, X_test, y_train, y_test=sampling(imbalancePreProcessing())
-    treeClass = DecisionTreeClassifier(min_samples_split=300,
-                                     criterion='entropy', max_depth=4,
+    X_train,X_test,y_train,y_test=sampling(imbalancePreProcessing())
+
+
+    treeClass = DecisionTreeClassifier(min_samples_split=50,
+                                     criterion='entropy',max_depth=19,
                                      random_state=1)
 
     treeClass.fit(X_train, y_train)
     y_pred = treeClass.predict(X_test)
     df=pd.DataFrame({'feature': features, 'importance': treeClass.feature_importances_}).sort_values(['importance'],ascending=[0])
-
-    print(df)
+    accuracy=metrics.accuracy_score(y_test, y_pred)
+    print(accuracy)
 #treeClassifier()
 
 def oneVsRestTreeClassifier():
     X_train, X_test, y_train, y_test =sampling(imbalancePreProcessing())
-    treeClass = OneVsRestClassifier(DecisionTreeClassifier(min_samples_split=300,
-                                     criterion='entropy', max_depth=4,
+    treeClass = OneVsRestClassifier(DecisionTreeClassifier(min_samples_split=50,
+                                     criterion='entropy', max_depth=19,
                                      random_state=1))
 
     treeClass.fit(X_train, y_train)
     y_pred = treeClass.predict(X_test)
-    print(y_pred)
+    accuracy=metrics.accuracy_score(y_test, y_pred)
+
+    print(accuracy)
 #oneVsRestTreeClassifier()
+
