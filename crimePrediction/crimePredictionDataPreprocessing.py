@@ -2,11 +2,9 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.model_selection import GridSearchCV
-from sklearn import metrics,tree
+from sklearn.model_selection import GridSearchCV,KFold
+from sklearn import tree
 
 # Label Encoder, get_dummies
 def stringProcessing(var):
@@ -54,79 +52,21 @@ def sampling(var):
 def paramEstimator():
     X, y = imbalancePreProcessing()
     parameters = {'max_depth': range(5, 20),'min_samples_split':[50,150,450,600]}
-    clf = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4)
+    inner_cv = KFold(n_splits=4, shuffle=True, random_state=1)
+    clf = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4,cv=inner_cv)
     clf.fit(X=X, y=y)
     tree_model = clf.best_estimator_
     print(clf.best_score_, clf.best_params_)
 #paramEstimator()
 
+
 def paramEstimatorRandomForest():
     X, y = imbalancePreProcessing()
     parameters = {'n_estimators': range(5, 12), 'max_features': range(5, 10)}
-    clf = GridSearchCV(RandomForestClassifier(), parameters, n_jobs=4)
+    inner_cv = KFold(n_splits=4, shuffle=True, random_state=1)
+    clf = GridSearchCV(RandomForestClassifier(), parameters, n_jobs=4,cv=inner_cv)
     clf.fit(X=X, y=y)
     tree_model = clf.best_estimator_
     print(clf.best_score_, clf.best_params_)
 #paramEstimatorRandomForest()
 
-
-def treeClassifier():
-    features = ['neighbourhood_id', 'total_area', 'total_population', 'home_prices', 'local_employment',
-                'social_assistance_recipients', 'catholic_school_graduation', 'catholic_school_literacy',
-                'catholic_university_applicants','occurrenceyear', 'occurrenceday', 'occurrencedayofyear', 'occurrencehour', 'lat',
-                'long', 'premisetype_Apartment', 'premisetype_Commercial', 'premisetype_House',
-                'premisetype_Other', 'premisetype_Outside','occurrencemonth_April', 'occurrencemonth_August', 'occurrencemonth_December',
-                'occurrencemonth_February', 'occurrencemonth_January', 'occurrencemonth_July', 'occurrencemonth_June',
-                'occurrencemonth_March', 'occurrencemonth_May', 'occurrencemonth_November', 'occurrencemonth_October',
-                'occurrencemonth_September', 'occurrencedayofweek_Friday    ', 'occurrencedayofweek_Monday    ',
-                'occurrencedayofweek_Saturday  ', 'occurrencedayofweek_Sunday    ', 'occurrencedayofweek_Thursday  ',
-                'occurrencedayofweek_Tuesday   ', 'occurrencedayofweek_Wednesday ']
-
-    X_train,X_test,y_train,y_test=sampling(imbalancePreProcessing())
-
-
-    treeClass = DecisionTreeClassifier(min_samples_split=50,
-                                     criterion='entropy',max_depth=19,
-                                     random_state=1)
-
-    treeClass.fit(X_train, y_train)
-    y_pred = treeClass.predict(X_test)
-    df=pd.DataFrame({'feature': features, 'importance': treeClass.feature_importances_}).sort_values(['importance'],ascending=[0])
-    accuracy=metrics.accuracy_score(y_test, y_pred)
-    print(accuracy)
-#treeClassifier()
-
-def oneVsRestTreeClassifier():
-    X_train, X_test, y_train, y_test =sampling(imbalancePreProcessing())
-    treeClass = OneVsRestClassifier(DecisionTreeClassifier(min_samples_split=50,
-                                     criterion='entropy', max_depth=19,
-                                     random_state=1))
-
-    treeClass.fit(X_train, y_train)
-    y_pred = treeClass.predict(X_test)
-    accuracy=metrics.accuracy_score(y_test, y_pred)
-
-    print(accuracy)
-#oneVsRestTreeClassifier()
-
-def randomForestClassifier():
-    X_train, X_test, y_train, y_test = sampling(imbalancePreProcessing())
-
-    rf = RandomForestClassifier(n_estimators=5,max_features=8)
-    rf = rf.fit(X_train, y_train)
-
-    predicted = rf.predict(X_test)
-    accuracy = metrics.accuracy_score(y_test, predicted)
-    print(accuracy)
-#randomForestClassifier()
-
-def randomForestClassifierOneVsRest():
-    X_train, X_test, y_train, y_test = sampling(imbalancePreProcessing())
-
-    rf = OneVsRestClassifier(RandomForestClassifier(n_estimators=5,max_features=8))
-    rf = rf.fit(X_train, y_train)
-
-    predicted = rf.predict(X_test)
-    accuracy = metrics.accuracy_score(y_test, predicted)
-    print(accuracy)
-#randomForestClassifierOneVsRest()

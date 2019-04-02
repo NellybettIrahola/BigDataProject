@@ -137,16 +137,9 @@ def groupingAl(var):
         analisis.select(analisis["year_difference"],analisis["index"],analisis["mci"]).groupBy("year_difference").count().orderBy(col("count").desc()).show()
 
     finalResult=analisis.where((col("occurrenceyear")>2013) & (col("year_difference")<5))
-    #df=finalResult
-    #data_types_string = [item[0] for item in finalResult.dtypes if item[1].startswith('string')]
-    #print(data_types_string)
-    #df.coalesce(1).write.format('com.databricks.spark.csv').save('./data/crimes_toronto.csv', header='true')
     finalResult=finalResult.toPandas()
-    #print(finalResult.isnull().sum())
-    #df=finalResult
     finalResult.to_csv('./data/crimes_toronto.csv', index=False)
-    #df['full_count'] = df.apply(lambda x: x.count(), axis=1)
-    #print(len(list(df)))
+
     return finalResult
 
 groupingAl(0)
