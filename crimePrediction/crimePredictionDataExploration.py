@@ -113,7 +113,6 @@ def joinDataset(variable):
                        data['total_population'], data['home_prices'], data['local_employment'],
                        data['social_assistance_recipients'], data['catholic_school_graduation'],
                        data['catholic_school_literacy'], data['catholic_university_applicants'],data['X'].alias("x"),data['Y'].alias("y"),data['Index_'].alias("index"),
-                       #data["event_unique_id"].cast(IntegerType()),
                        data["premisetype"],data["ucr_code"],data["ucr_ext"],data["offence"],
                        data["reportedyear"],data["reportedmonth"], data["reportedday"],data["reporteddayofyear"],data["reporteddayofweek"],
                        data["reportedhour"], data["occurrenceyear"],data["occurrencemonth"],data["occurrenceday"],data["occurrencedayofyear"],
