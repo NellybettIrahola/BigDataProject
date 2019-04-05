@@ -3,7 +3,7 @@ from crimePrediction.crimePredictionModels import treeClassifier,randomForestCla
 
 #Classifiers
 overSamplingElements=imbalancePreProcessing(1)
-underSampling=imbalancePreProcessing1(1)
+underSamplingElements=imbalancePreProcessing1(1)
 
 
 def metricsResultFromSampling():
@@ -12,9 +12,9 @@ def metricsResultFromSampling():
     print(randomForestClassifier(overSamplingElements))
     print(bayes(overSamplingElements))
 
-    print(treeClassifier(overSamplingElements))
-    print(randomForestClassifier(overSamplingElements))
-    print(bayes(overSamplingElements))
+    print(treeClassifier(underSamplingElements))
+    print(randomForestClassifier(underSamplingElements))
+    print(bayes(underSamplingElements))
 
     return ""
 
