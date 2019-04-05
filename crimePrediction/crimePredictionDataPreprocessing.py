@@ -3,7 +3,7 @@ from sklearn.preprocessing import LabelEncoder
 from imblearn.over_sampling import SMOTENC
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from imblearn.under_sampling import RandomUnderSampler
+from imblearn.under_sampling import RandomUnderSampler,NearMiss
 from sklearn.model_selection import GridSearchCV,KFold
 from sklearn import tree
 
@@ -35,7 +35,7 @@ def imbalancePreProcessing(var):
     y=crimes.mci
     X_train, X_test, y_train, y_test=sampling((X,y))
 
-    sm = SMOTENC(random_state=42,categorical_features=[16,17,18,19,20])
+    sm = SMOTENC(random_state=1,categorical_features=[16,17,18,19,20])
     X_res, y_res = sm.fit_sample(X_train, y_train)
     #print(len(y_res[y_res == 1]))
     #print(len(y_res[y_res == 0]))
@@ -58,7 +58,7 @@ def imbalancePreProcessing1(var):
     y=crimes.mci
     X_train, X_test, y_train, y_test=sampling((X,y))
 
-    rus = RandomUnderSampler(random_state=42)
+    rus = NearMiss(version=1,random_state=1)
     X_res, y_res = rus.fit_resample(X, y)
     #print(len(y_res[y_res == 1]))
     #print(len(y_res[y_res == 0]))
