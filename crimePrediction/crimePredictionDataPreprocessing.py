@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from imblearn.over_sampling import SMOTENC
+from imblearn.over_sampling import SMOTENC,SMOTE,RandomOverSampler
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from imblearn.under_sampling import RandomUnderSampler,NearMiss
@@ -35,7 +35,7 @@ def imbalancePreProcessing(var):
     y=crimes.mci
     X_train, X_test, y_train, y_test=sampling((X,y))
 
-    sm = SMOTENC(random_state=1,categorical_features=[16,17,18,19,20])
+    sm = SMOTE(random_state=42)#,categorical_features=[16,17,18,19,20])
     X_res, y_res = sm.fit_sample(X_train, y_train)
     #print(len(y_res[y_res == 1]))
     #print(len(y_res[y_res == 0]))
@@ -58,7 +58,7 @@ def imbalancePreProcessing1(var):
     y=crimes.mci
     X_train, X_test, y_train, y_test=sampling((X,y))
 
-    rus = NearMiss(version=1,random_state=1)
+    rus = RandomUnderSampler(random_state=42)
     X_res, y_res = rus.fit_resample(X, y)
     #print(len(y_res[y_res == 1]))
     #print(len(y_res[y_res == 0]))
@@ -87,7 +87,7 @@ def dataInitial():
 def paramEstimator():
     X, y = dataInitial()
     parameters = {'max_depth': range(5, 20),'min_samples_split':[50,150,450,600]}
-    inner_cv = KFold(n_splits=4, shuffle=True, random_state=1)
+    inner_cv = KFold(n_splits=4, shuffle=True, random_state=42)
     clf = GridSearchCV(tree.DecisionTreeClassifier(), parameters, n_jobs=4,cv=inner_cv)
     clf.fit(X=X, y=y)
     tree_model = clf.best_estimator_
@@ -98,7 +98,7 @@ def paramEstimator():
 def paramEstimatorRandomForest():
     X, y = dataInitial()
     parameters = {'n_estimators': range(5, 12), 'max_features': range(5, 10)}
-    inner_cv = KFold(n_splits=4, shuffle=True, random_state=1)
+    inner_cv = KFold(n_splits=4, shuffle=True, random_state=42)
     clf = GridSearchCV(RandomForestClassifier(), parameters, n_jobs=4,cv=inner_cv)
     clf.fit(X=X, y=y)
     tree_model = clf.best_estimator_

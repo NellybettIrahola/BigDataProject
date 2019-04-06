@@ -1,6 +1,6 @@
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.multiclass import OneVsRestClassifier
+from sklearn.multiclass import OneVsRestClassifier, OneVsOneClassifier
 from sklearn import metrics
 from crimePrediction.crimePredictionDataPreprocessing import imbalancePreProcessing1,imbalancePreProcessing
 import pandas as pd
@@ -26,7 +26,7 @@ def treeClassifier(sample):
     y_pred = treeClass.predict(X_test)
     #df=pd.DataFrame({'feature': features, 'importance': treeClass.feature_importances_}).sort_values(['importance'],ascending=[0])
     accuracy=metrics.accuracy_score(y_test, y_pred)
-    f1score=metrics.f1_score(y_test, y_pred, average='macro')
+    f1score=metrics.f1_score(y_test, y_pred, average='weighted')
 
     return (accuracy,f1score)
 #treeClassifier()
@@ -40,7 +40,7 @@ def oneVsRestTreeClassifier(sample):
     treeClass.fit(X_train, y_train)
     y_pred = treeClass.predict(X_test)
     accuracy=metrics.accuracy_score(y_test, y_pred)
-    f1score = metrics.f1_score(y_test, y_pred, average='macro')
+    f1score = metrics.f1_score(y_test, y_pred, average='weighted')
 
     return (accuracy, f1score)
 #oneVsRestTreeClassifier()
@@ -54,12 +54,12 @@ def randomForestClassifier(sample):
 
     X_train, X_test, y_train, y_test = sample
 
-    rf = RandomForestClassifier(n_estimators=5,max_features=8,random_state=1)
+    rf = RandomForestClassifier(random_state=1) #min_samples_split=10,max_depth=30,n_estimators=150,
     rf = rf.fit(X_train, y_train)
 
     predicted = rf.predict(X_test)
     accuracy = metrics.accuracy_score(y_test, predicted)
-    f1score = metrics.f1_score(y_test, predicted, average='macro')
+    f1score = metrics.f1_score(y_test, predicted, average='weighted')
     #print (sorted(zip(map(lambda x: round(x, 4), rf.feature_importances_), features), reverse=True))
     return (accuracy, f1score)
 #randomForestClassifier()
@@ -67,12 +67,12 @@ def randomForestClassifier(sample):
 def randomForestClassifierOneVsRest(sample):
     X_train, X_test, y_train, y_test = sample
 
-    rf = OneVsRestClassifier(RandomForestClassifier(n_estimators=5,max_features=8,random_state=1))
+    rf = OneVsRestClassifier(RandomForestClassifier(random_state=1)) #n_estimators=5,max_features=8
     rf = rf.fit(X_train, y_train)
 
     predicted = rf.predict(X_test)
     accuracy = metrics.accuracy_score(y_test, predicted)
-    f1score = metrics.f1_score(y_test, predicted, average='macro')
+    f1score = metrics.f1_score(y_test, predicted, average='weighted')
     return (accuracy, f1score)
 #randomForestClassifierOneVsRest()
 
@@ -83,7 +83,7 @@ def bayes(sample):
     predicted = std_clf.predict(X_test)
 
     accuracy=metrics.accuracy_score(y_test, predicted)
-    f1score = metrics.f1_score(y_test, predicted, average='macro')
+    f1score = metrics.f1_score(y_test, predicted, average='weighted')
 
     return (accuracy, f1score)
 #bayes()
@@ -95,7 +95,7 @@ def bayesOneVsRest(sample):
     predicted = std_clf.predict(X_test)
 
     accuracy=metrics.accuracy_score(y_test, predicted)
-    f1score = metrics.f1_score(y_test, predicted, average='macro')
+    f1score = metrics.f1_score(y_test, predicted, average='weighted')
 
     return (accuracy, f1score)
 #bayesOneVsRest() f score NEAR MIST
