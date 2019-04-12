@@ -10,6 +10,13 @@ from sklearn import tree
 # Label Encoder, get_dummies
 def stringProcessing(var):
     df = pd.read_csv('./data/crimes_toronto.csv', index_col=None)
+
+    #Creating a New class
+    #df1 = df.loc[df['offence'] == 'Assault'].replace('Assault', 'Assault1')
+    #df=df.loc[df['offence'] != 'Assault']
+    #df=df.append(df1)
+    #print(df.groupby('mci').count())
+
     data_types_string=['mci','occurrencemonth', 'occurrencedayofweek'] #'premisetype', 'offence', 'reportedmonth', 'reporteddayofweek', 'occurrencemonth', 'occurrencedayofweek','mci']
     output = df.copy()
     for col in data_types_string:
@@ -37,6 +44,8 @@ def imbalancePreProcessing(var):
 
     sm = SMOTE(random_state=42)#,categorical_features=[16,17,18,19,20])
     X_res, y_res = sm.fit_sample(X_train, y_train)
+
+    #Number of elements per class
     #print(len(y_res[y_res == 1]))
     #print(len(y_res[y_res == 0]))
     #print(len(y_res[y_res == 2]))
@@ -44,8 +53,6 @@ def imbalancePreProcessing(var):
         y_res=pd.get_dummies(y_res, prefix_sep='_')
         y_test = pd.get_dummies(y_test, prefix_sep='_')
 
-    #print(y_res)
-    #print(X_test)
     return (X_res,X_test, y_res,y_test)
 #imbalancePreProcessing(1)
 
@@ -60,6 +67,8 @@ def imbalancePreProcessing1(var):
 
     rus = RandomUnderSampler(random_state=42)
     X_res, y_res = rus.fit_resample(X, y)
+
+    #Number of elements per class
     #print(len(y_res[y_res == 1]))
     #print(len(y_res[y_res == 0]))
     #print(len(y_res[y_res == 2]))
@@ -67,8 +76,7 @@ def imbalancePreProcessing1(var):
         y_res=pd.get_dummies(y_res, prefix_sep='_')
         y_test = pd.get_dummies(y_test, prefix_sep='_')
 
-    #print(y_res)
-    #print(X_test)
+
     return (X_res,X_test, y_res,y_test)
 #imbalancePreProcessing1(1)
 

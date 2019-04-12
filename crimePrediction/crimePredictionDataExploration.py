@@ -100,7 +100,7 @@ def dataSetCreactionCrime(crimeFilename,variable):
 
 
     return numberNotNull
-
+dataSetCreactionCrime("./data/MCI_2014_to_2017.csv",1)
 
 def joinDataset(variable):
 
@@ -141,4 +141,4 @@ def groupingAl(var):
 
     return finalResult
 
-groupingAl(0)
+#groupingAl(0)
